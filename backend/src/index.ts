@@ -6,6 +6,23 @@ import { decode, sign, verify } from 'hono/jwt'
 
 const app = new Hono()
 
+app.use('/api/v1/blog/*', async (c, next) => {
+
+  const header = c.req.header("authorization") || "";
+
+  //@ts-ignore
+  const response = await verify(header, c.env.JWT_SECRET);
+
+  if (response.id) {
+    next();
+  } else {
+    c.status(403);
+    return c.json({ error: "unauthorized" });
+  }
+
+})
+
+//signup
 app.post('/api/v1/signup', async (c) => {
   const prisma = new PrismaClient({
     //@ts-ignore
@@ -17,14 +34,12 @@ app.post('/api/v1/signup', async (c) => {
   const user = await prisma.user.create({
     data: {
       email: body.email,
-      passwrod: body.passwrod,
+      password: body.password,
     }
-  })
+  });
 
-  const token = sign({
-    id: user.id,
-    //@ts-ignore
-  }, c.env.JWT_SECRET);
+  //@ts-ignore
+  const token = await sign({ id: user.id }, c.env.JWT_SECRET)
 
 
   return c.json({
@@ -32,6 +47,7 @@ app.post('/api/v1/signup', async (c) => {
   })
 })
 
+//signin
 app.post('/api/v1/signin', async (c) => {
 
   const prisma = new PrismaClient({
@@ -44,6 +60,7 @@ app.post('/api/v1/signin', async (c) => {
   const user = await prisma.user.findUnique({
     where: {
       email: body.email,
+      password: body.password,
     }
   })
 
@@ -53,7 +70,7 @@ app.post('/api/v1/signin', async (c) => {
   }
 
   //@ts-ignore
-  const jwt = sign({ id: user.id }, c.env.JWT_SECRET)
+  const jwt = await sign({ id: user.id }, c.env.JWT_SECRET)
 
   return c.json({ jwt });
 })
