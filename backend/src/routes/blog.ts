@@ -18,14 +18,23 @@ blogRouter.use('/*', async (c, next) => {
 
     const authHeader = c.req.header("authorization") || "";
 
-    const user = await verify(authHeader, c.env.JWT_SECRET);
+    try {
 
-    if (user) {
-        c.set('userId', user.id);
-        await next();
-    } else {
+        const user = await verify(authHeader, c.env.JWT_SECRET);
+
+        if (user) {
+            c.set('userId', user.id);
+            await next();
+        } else {
+            c.status(403);
+            return c.json({ message: "You are not logged in" });
+        }
+
+    } catch (error) {
+
         c.status(403);
-        return c.json({ message: "Unauthorized" });
+        return c.json({ message: "You are not logged in" });
+
     }
 
 })
