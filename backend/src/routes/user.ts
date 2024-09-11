@@ -4,6 +4,8 @@ import { withAccelerate } from '@prisma/extension-accelerate'
 
 import { sign } from 'hono/jwt'
 
+import { signinInput, signupInput } from "@o.sai/medium-common";
+
 export const userRouter = new Hono<{
     Bindings: {
         DATABASE_URL: string,
@@ -13,17 +15,26 @@ export const userRouter = new Hono<{
 
 //signup
 userRouter.post('/signup', async (c) => {
-    const prisma = new PrismaClient({
-        datasourceUrl: c.env.DATABASE_URL,
-    }).$extends(withAccelerate())
 
     const body = await c.req.json();
+    const { success } = signupInput.safeParse(body);
+
+    if (!success) {
+        c.status(411);
+        return c.json({
+            message: "Inputs are incorrect"
+        })
+    }
+
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate());
 
     try {
 
         const user = await prisma.user.create({
             data: {
-                email: body.email,
+                email: body.username,
                 password: body.password,
                 name: body.name
             }
@@ -45,16 +56,24 @@ userRouter.post('/signup', async (c) => {
 //signin
 userRouter.post('/signin', async (c) => {
 
+    const body = await c.req.json();
+    const { success } = signinInput.safeParse(body);
+
+    if (!success) {
+        c.status(411);
+        return c.json({
+            message: "Inputs are incorrect"
+        })
+    }
+
     const prisma = new PrismaClient({
         datasourceUrl: c.env.DATABASE_URL,
-    }).$extends(withAccelerate())
-
-    const body = await c.req.json();
+    }).$extends(withAccelerate());
 
     try {
         const user = await prisma.user.findUnique({
             where: {
-                email: body.email,
+                email: body.username,
                 password: body.password,
             }
         })
