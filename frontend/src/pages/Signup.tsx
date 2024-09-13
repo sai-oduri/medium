@@ -3,11 +3,11 @@ import { Auth } from "../components/Auth"
 
 export const Signup = () => {
     return (
-        <div className="grid lg:grid-cols-2">
+        <div className="grid grid-cols-1 md:grid-cols-2">
             <div>
                 <Auth type="signup"></Auth>
             </div>
-            <div className="hidden lg:block">
+            <div className="hidden md:block">
                 <Quote></Quote>
             </div>
         </div>
