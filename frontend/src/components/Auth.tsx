@@ -1,14 +1,27 @@
 import { SignupInput } from "@o.sai/medium-common"
 import { ChangeEvent, useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+import axios from "axios"
+import { BACKEND_URL } from "../config"
 
 export const Auth = ({ type }: { type: "signup" | "signin" }) => {
-
+    const navigate = useNavigate();
     const [postInputs, setPostInputs] = useState<SignupInput>({
         name: "",
         username: "",
         password: ""
-    })
+    });
+
+    async function sendRequest() {
+        try {
+            const response = await axios.post(`${BACKEND_URL}/api/v1/user/${type === "signin" ? "signin" : "signup"}`, postInputs);
+            const jwt = await response.data.jwt;
+            localStorage.setItem("token", jwt);
+            navigate("/blogs")
+        } catch (e) {
+            alert("Error while " + type);
+        }
+    }
 
     return (
         <div className="h-screen flex justify-center flex-col items-center">
@@ -21,12 +34,13 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
                     {type === "signup" ? "Login" : "Create"}
                 </Link>
             </div>
-            <LabelledInput label="Name" placeholder="Enter your username" type="text" onChange={(e) => {
+            {type === "signup" ? <LabelledInput label="Name" placeholder="Enter your username" type="text" onChange={(e) => {
                 setPostInputs({
                     ...postInputs,
                     name: e.target.value
                 });
-            }} />
+            }} /> : null}
+
             <LabelledInput label="Email" placeholder="email@example.com" type="text" onChange={(e) => {
                 setPostInputs({
                     ...postInputs,
@@ -40,7 +54,7 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
                 });
             }} />
 
-            <button className="bg-black text-white p-2 w-80 rounded-3xl mt-3 hover:scale-105 transition-all duration-200 font-extralight">
+            <button onClick={sendRequest} className="bg-black text-white p-2 w-80 rounded-3xl mt-3 hover:scale-105 transition-all duration-200 font-extralight">
                 {type == "signin" ? "Sign In" : "Sign Up"}
             </button>
 
