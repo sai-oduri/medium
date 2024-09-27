@@ -5,7 +5,7 @@ interface BlogCardProps {
     authorName: string,
     title: string,
     content: string,
-    publishedDate: string
+    created_at: string,
 }
 
 export const BlogCard = ({
@@ -13,8 +13,16 @@ export const BlogCard = ({
     authorName,
     title,
     content,
-    publishedDate
+    created_at,
 }: BlogCardProps) => {
+
+    const isoDate: string = created_at;
+    const date: Date = new Date(isoDate);
+
+    const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
+
+    const formattedDate: string = date.toLocaleDateString('en-GB', options);
+
     return (
         <Link className="w-screen md:w-full" to={`/blog/${id}`}>
 
@@ -29,7 +37,7 @@ export const BlogCard = ({
                     <div className="bg-slate-700 h-1 w-1 rounded-full">
                     </div>
                     <div className="mx-1 font-thin text-slate-500 text-sm">
-                        {publishedDate}
+                        {formattedDate}
                     </div>
                 </div>
                 <div className="text-xl font-bold">

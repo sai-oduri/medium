@@ -4,6 +4,19 @@ import { Blog } from "../hooks/index"
 import { AppBar } from "./AppBar";
 
 const FullBlog = ({ blog }: { blog: Blog | undefined }) => {
+
+    let formattedDat: string = "";
+
+    if (blog) {
+
+        const isoDate: string = blog.created_at;
+        const date: Date = new Date(isoDate);
+
+        const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
+
+        formattedDat = date.toLocaleDateString('en-GB', options);
+    }
+
     return (
         <div className="w-screen h-screen">
 
@@ -17,7 +30,7 @@ const FullBlog = ({ blog }: { blog: Blog | undefined }) => {
                             {blog.title}
                         </div>
                         <div className="m-1">
-                            Posted on 2nd December 2023
+                            {formattedDat}
                         </div>
                         <div className="text-slate-700 m-1">
                             {blog.content}
