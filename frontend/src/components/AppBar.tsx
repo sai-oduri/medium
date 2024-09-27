@@ -11,7 +11,7 @@ export const AppBar = () => {
             <div className="flex justify-between gap-4 items-center">
                 <div>
                     <Link to="/publish">
-                        <button className="bg-green-500 text-white px-3 py-1 font-mono font-semibold rounded-2xl">New</button>
+                        <button className="bg-green-600 text-white hover:bg-green-700 hover:scale-105 transition-all px-3 py-1 font-mono font-semibold rounded-2xl">New</button>
                     </Link>
                 </div>
                 <div className="w-8 h-8 mx-1">

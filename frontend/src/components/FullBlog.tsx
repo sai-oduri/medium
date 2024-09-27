@@ -44,7 +44,7 @@ const FullBlog = ({ blog }: { blog: Blog | undefined }) => {
 
                             <div className="">
 
-                                <div className="text-2xl font-semibold">Authoor</div>
+                                <div className="text-2xl font-semibold">Author</div>
 
                                 <div className="flex justify-start mt-1">
                                     <div className="w-6 h-6 rounded-full bg-slate-500 text-center text-white mr-1">
